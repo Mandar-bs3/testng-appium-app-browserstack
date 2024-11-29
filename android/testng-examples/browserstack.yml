@@ -26,7 +26,7 @@ framework: testng
 
 source: testng:appium-sample-sdk:v1.1
 
-app: ./WikipediaSample.apk
+app: ./app-a11y-sample-app.apk
 #app: ./LocalSample.apk #For running local tests
 
 # =======================================
@@ -36,15 +36,39 @@ app: ./WikipediaSample.apk
 # Entire list available here -> (https://www.browserstack.com/list-of-browsers-and-platforms/automate)
 
 platforms:
-  - deviceName: Samsung Galaxy S22 Ultra
-    osVersion: 12.0
+  - deviceName: Samsung Galaxy S21 Ultra
+    osVersion: 11.0
     platformName: android
+    accessibility: true
+#    accessibilityOptions:
+#      wcagVersion: wcag21aa
+#      includeIssueType:
+#        bestPractice: true
+#      timeOut:
+#        scan: 10
+#        assert: 30
   - deviceName: Samsung Galaxy S21
     osVersion: 11.0
     platformName: android
-  - deviceName: Google Pixel 6 Pro
+    accessibility: true
+#    accessibilityOptions:
+#      wcagVersion: wcag21aaa
+#      includeIssueType:
+#        bestPractice: true
+#      timeOut:
+#        scan: 10
+#        assert: 30
+  - deviceName: Google Pixel 6
     osVersion: 12.0
     platformName: android
+    accessibility: true
+#    accessibilityOptions:
+#      wcagVersion: wcag22aa
+#      includeIssueType:
+#        bestPractice: true
+#      timeOut:
+#        scan: 10
+#        assert: 30
 
 # =======================
 # Parallels per Platform

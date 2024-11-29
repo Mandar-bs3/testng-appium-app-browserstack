@@ -15,6 +15,15 @@ public class FirstTest extends AppiumTest {
 
     @Test
     public void test() throws Exception {
+
+      WebElement continueButton = (WebElement) new WebDriverWait(driver, Duration.ofSeconds(30)).until(
+                ExpectedConditions.elementToBeClickable(AppiumBy.id("org.wikipedia.alpha:id/fragment_onboarding_forward_button")));
+      continueButton.click();
+
+      WebElement skipButton = (WebElement) new WebDriverWait(driver, Duration.ofSeconds(30)).until(
+             ExpectedConditions.elementToBeClickable(AppiumBy.id("org.wikipedia.alpha:id/fragment_onboarding_skip_button")));
+      skipButton.click();
+  
       WebElement searchElement = (WebElement) new WebDriverWait(driver, Duration.ofSeconds(30)).until(
           ExpectedConditions.elementToBeClickable(AppiumBy.accessibilityId("Search Wikipedia")));
 
@@ -26,5 +35,10 @@ public class FirstTest extends AppiumTest {
 
       List<WebElement> allProductsName = driver.findElements(AppiumBy.className("android.widget.TextView"));
       Assert.assertTrue(allProductsName.size() > 0);
+
+      WebElement searchResultItem= (WebElement) new WebDriverWait(driver, Duration.ofSeconds(30)).until(
+              ExpectedConditions.elementToBeClickable(AppiumBy.id("org.wikipedia.alpha:id/page_list_item_title")));
+      searchResultItem.click();
+      Thread.sleep(5000);
     }
 }

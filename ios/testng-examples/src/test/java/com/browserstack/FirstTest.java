@@ -15,18 +15,28 @@ public class FirstTest extends AppiumTest {
 
   @Test
   public void test() throws Exception {
-    WebElement textButton = (WebElement) new WebDriverWait(driver, Duration.ofSeconds(30)).until(
-        ExpectedConditions.elementToBeClickable(AppiumBy.accessibilityId("Text Button")));
-    textButton.click();
-    WebElement textInput = (WebElement) new WebDriverWait(driver, Duration.ofSeconds(30)).until(
-        ExpectedConditions.elementToBeClickable(AppiumBy.accessibilityId("Text Input")));
-    textInput.sendKeys("hello@browserstack.com"+"\n");
 
-    Thread.sleep(5000);
+    new WebDriverWait(driver, Duration.ofSeconds(30)).until(
+            ExpectedConditions.elementToBeClickable(AppiumBy.className("XCUIElementTypeStaticText")));
 
-    WebElement textOutput = (WebElement) new WebDriverWait(driver, Duration.ofSeconds(30)).until(
-        ExpectedConditions.elementToBeClickable(AppiumBy.accessibilityId("Text Output")));
+    WebElement newButton = (WebElement) new WebDriverWait(driver, Duration.ofSeconds(30)).until(
+        ExpectedConditions.elementToBeClickable(AppiumBy.accessibilityId("New")));
+    newButton.click();
+    Thread.sleep(50);
 
-    Assert.assertEquals(textOutput.getText(),"hello@browserstack.com");
+    WebElement bestButton = (WebElement) new WebDriverWait(driver, Duration.ofSeconds(30)).until(
+        ExpectedConditions.elementToBeClickable(AppiumBy.accessibilityId("Best")));
+    bestButton.click();
+    Thread.sleep(50);
+
+    WebElement favButton = (WebElement) new WebDriverWait(driver, Duration.ofSeconds(30)).until(
+            ExpectedConditions.elementToBeClickable(AppiumBy.accessibilityId("Fav")));
+    favButton.click();
+    Thread.sleep(50);
+
+    WebElement settingsButton = (WebElement) new WebDriverWait(driver, Duration.ofSeconds(30)).until(
+            ExpectedConditions.elementToBeClickable(AppiumBy.accessibilityId("Setting")));
+    settingsButton.click();
+    Thread.sleep(50);
   }
 }
