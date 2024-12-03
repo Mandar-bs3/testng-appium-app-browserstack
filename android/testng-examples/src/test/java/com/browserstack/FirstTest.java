@@ -21,13 +21,14 @@ import io.appium.java_client.android.AndroidTouchAction;
 import io.appium.java_client.touch.offset.PointOption;
 //import io.appium.java_client.android.AndroidKeyCode;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.interactions.Actions;
 
 public class FirstTest extends AppiumTest {
 
     @Test
     public void test() throws Exception {
       driver.launchApp();
-      WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+//      driver.setSetting(Setting.WAIT_FOR_IDLE_TIMEOUT, Duration.ofSeconds(5));
 
       driver.setLocation(new Location(49, 123, 10));
       WebElement continueButton = (WebElement) new WebDriverWait(driver, Duration.ofSeconds(30)).until(
@@ -51,6 +52,10 @@ public class FirstTest extends AppiumTest {
       WebElement insertTextElement = (WebElement) new WebDriverWait(driver, Duration.ofSeconds(30)).until(
           ExpectedConditions.elementToBeClickable(AppiumBy.id("org.wikipedia.alpha:id/search_src_text")));
       insertTextElement.click();
+      Actions action = new Actions(driver);
+      action.moveToElement(insertTextElement);
+      action.doubleClick();
+      action.perform();
       driver.hideKeyboard();
       insertTextElement.sendKeys("test");
 //      driver.pressKeyCode(AndroidKeyCode.SPACE);
@@ -84,6 +89,7 @@ public class FirstTest extends AppiumTest {
         System.out.println(contextName);
       }
       driver.activateApp(bundleId);
+      driver.swipe(75, 500, 75, 0, 0.8);
       driver.context(contextNames.toArray(new String[contextNames.size()])[0]);
       driver.terminateApp(bundleId);
 //      JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
