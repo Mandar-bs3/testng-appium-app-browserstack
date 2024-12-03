@@ -38,5 +38,6 @@ public class FirstTest extends AppiumTest {
             ExpectedConditions.elementToBeClickable(AppiumBy.accessibilityId("Setting")));
     settingsButton.click();
     Thread.sleep(50);
+    driver.shake();
   }
 }
