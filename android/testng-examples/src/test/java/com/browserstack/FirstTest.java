@@ -22,6 +22,8 @@ import io.appium.java_client.touch.offset.PointOption;
 //import io.appium.java_client.android.AndroidKeyCode;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.interactions.Actions;
+//import io.appium.java_client.flutter.commands.DragAndDropParameter;
+
 
 public class FirstTest extends AppiumTest {
 
@@ -36,7 +38,7 @@ public class FirstTest extends AppiumTest {
       continueButton.click();
       driver.performTouchAction(new TouchAction(driver).tap(PointOption.point(500, 500)));
       TouchAction action1 = new TouchAction(driver).press(PointOption.point(500, 500));
-      TouchAction action2 = new TouchAction(driver).press(PointOption.point(700, 500));
+      TouchAction action2 = new TouchAction(driver).longPress(PointOption.point(700, 500));
 
       MultiTouchAction multiTouchAction = new MultiTouchAction(driver);
       driver.performMultiTouchAction(multiTouchAction.add(action1).add(action2));
@@ -52,10 +54,10 @@ public class FirstTest extends AppiumTest {
       WebElement insertTextElement = (WebElement) new WebDriverWait(driver, Duration.ofSeconds(30)).until(
           ExpectedConditions.elementToBeClickable(AppiumBy.id("org.wikipedia.alpha:id/search_src_text")));
       insertTextElement.click();
-      Actions action = new Actions(driver);
-      action.moveToElement(insertTextElement);
-      action.doubleClick();
-      action.perform();
+//      Actions action = new Actions(driver);
+//      action.moveToElement(insertTextElement);
+//      action.doubleClick();
+//      action.perform();
       driver.hideKeyboard();
       insertTextElement.sendKeys("test");
 //      driver.pressKeyCode(AndroidKeyCode.SPACE);
@@ -76,23 +78,36 @@ public class FirstTest extends AppiumTest {
       driver.resetApp();
       String relativePath = "EspressoTestingUrl-debug.apk";  // Relative path to APK file
       String projectDir = System.getProperty("user.dir");  // Get the current project directory
-      File appFile = Paths.get(projectDir, relativePath).toFile();  // Resolve the absolute path
       String bundleId = "com.bsstag.espressotesting";
       String appActivity = "org.wikipedia.main.MainActivity";
 //      driver.startActivity("appPackage",bundleId, null, null);
-      if (appFile.exists()) {
-        driver.installApp("https://qa-live-server.bsstag.com/download/EspressoTestingUrl-debug.apk");
-      }
+      driver.installApp("https://qa-live-server.bsstag.com/download/EspressoTestingUrl-debug.apk");
       Set<String> contextNames = driver.getContextHandles();
       System.out.println("Available Contexts:");
       for (String contextName : contextNames) {
         System.out.println(contextName);
       }
       driver.activateApp(bundleId);
-      driver.swipe(75, 500, 75, 0, 0.8);
+      driver.rotate(ScreenOrientation.PORTRAIT);
+      try {
+        WebElement allowButton = driver.findElement(By.id("com.android.permissioncontroller:id/permission_allow_one_time_button"));
+        allowButton.click();
+        System.out.println("Location permission granted.");
+      } catch (Exception e) {
+        System.out.println("No permission dialog appeared.");
+      }
+      WebElement alertButton= (WebElement) new WebDriverWait(driver, Duration.ofSeconds(30)).until(
+              ExpectedConditions.elementToBeClickable(AppiumBy.id("com.bsstag.espressotesting:id/alert_button")));
+      alertButton.click();
+      Thread.sleep(2000);
+      driver.switchTo().alert().accept();
+      Map<String, Object> deviceInfo = (Map<String, Object>) driver.executeScript("mobile: deviceInfo");
+      System.out.println("Device Model: " + deviceInfo.get("model"));
+      System.out.println("Device OS Version: " + deviceInfo.get("version"));
       driver.context(contextNames.toArray(new String[contextNames.size()])[0]);
       driver.terminateApp(bundleId);
-//      JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
-//      jsExecutor.executeScript("document.body.style.backgroundColor = 'lightblue';");
+//      driver.performDragAndDrop(new DragAndDropParameter(
+//              driver.findElement(AppiumBy.flutterKey("enabled")),
+//              driver.findElement(AppiumBy.flutterKey("Fixed Size Text"))));
     }
 }
