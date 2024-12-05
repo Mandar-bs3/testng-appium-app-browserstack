@@ -15,6 +15,8 @@ import io.appium.java_client.android.AndroidTouchAction;
 import io.appium.java_client.touch.offset.PointOption;
 import java.time.Duration;
 import java.util.Map;
+import java.util.Set;
+import org.openqa.selenium.By;
 
 public class FirstTest extends AppiumTest {
 
@@ -61,5 +63,65 @@ public class FirstTest extends AppiumTest {
     driver.rotate(ScreenOrientation.PORTRAIT);
     Map<String, Object> deviceInfo = (Map<String, Object>) driver.executeScript("mobile: deviceInfo");
     System.out.println("Device Model: " + deviceInfo.get("model"));
+    driver.activateApp("com.google.chrome.ios");
+    Thread.sleep(2000);
+
+    Set<String> contextHandles = driver.getContextHandles();
+    System.out.println("Available Contexts:");
+    for (String contextName : contextHandles) {
+      System.out.println(contextName);
+    }
+    for (String context : contextHandles) {
+      if (context.contains("WEBVIEW_chrome")) {
+        driver.context(context); // Switch to WebView context
+        break;
+      }
+    }
+
+    driver.get("https://www.example.com/ajax_test");
+
+    // Asynchronous JavaScript to wait for AJAX request to finish
+    String script = "var callback = arguments[arguments.length - 1];"
+            + "var interval = setInterval(function() {"
+            + "    if (document.readyState === 'complete') {"
+            + "        clearInterval(interval);"
+            + "        callback(true);"
+            + "    }"
+            + "}, 100);";
+
+    // Execute the async script and wait for the AJAX request to finish
+    Boolean ajaxCompleted = (Boolean) driver.executeAsyncScript(script);
+
+    if (ajaxCompleted) {
+      System.out.println("AJAX request completed.");
+    } else {
+      System.out.println("AJAX request not completed.");
+    }
+
+    // switch to frame and parent frame
+    driver.get("https://www.w3schools.com/html/tryit.asp?filename=tryhtml_iframe");
+    driver.switchTo().frame("iframeResult");
+//      WebElement text = driver.findElement(By.cssSelector("h1"));
+//      System.out.println(text.getText());
+    driver.switchTo().parentFrame();
+//      WebElement result = driver.findElement(By.id("result"));
+//      System.out.println("Result text: " + result.getText());
+
+    driver.get("https://the-internet.herokuapp.com/javascript_alerts");
+    WebElement confirmPopupBtn = (WebElement) new WebDriverWait(driver, Duration.ofSeconds(30)).until(
+            ExpectedConditions.elementToBeClickable(By.cssSelector("button[onclick='jsConfirm()']")));
+    confirmPopupBtn.click();
+    Thread.sleep(2000);
+    driver.switchTo().alert().dismiss();
+    String title = (String) driver.executeScript("return document.title;");
+    System.out.println("Page Title: " + title);
+    WebElement elementalWeb = (WebElement) new WebDriverWait(driver, Duration.ofSeconds(30)).until(
+            ExpectedConditions.elementToBeClickable(By.cssSelector("a[href='http://elementalselenium.com/']")));
+    elementalWeb.click();
+    driver.navigate().refresh();
+    driver.navigate().back();
+    driver.navigate().forward();
+    driver.terminateApp("japan.tokyo.chiyoda.sogarage.ios.HackerNewsScrapBookFree");
+
   }
 }
