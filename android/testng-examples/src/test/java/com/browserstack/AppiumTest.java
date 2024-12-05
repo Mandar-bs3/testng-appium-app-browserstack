@@ -17,6 +17,7 @@ public class AppiumTest {
     @BeforeMethod(alwaysRun=true)
     public void setUp() throws Exception {
         MutableCapabilities capabilities = new UiAutomator2Options();
+        capabilities.setCapability("browserName", "Chrome");
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"),capabilities);
     }
 

@@ -39,9 +39,10 @@ public class FirstTest extends AppiumTest {
       driver.performTouchAction(new TouchAction(driver).tap(PointOption.point(500, 500)));
       TouchAction action1 = new TouchAction(driver).press(PointOption.point(500, 500));
       TouchAction action2 = new TouchAction(driver).longPress(PointOption.point(700, 500));
+      TouchAction action3 = new TouchAction(driver).moveTo(PointOption.point(800, 800));
 
       MultiTouchAction multiTouchAction = new MultiTouchAction(driver);
-      driver.performMultiTouchAction(multiTouchAction.add(action1).add(action2));
+      driver.performMultiTouchAction(multiTouchAction.add(action1).add(action2).add(action3));
 
       WebElement skipButton = (WebElement) new WebDriverWait(driver, Duration.ofSeconds(30)).until(
              ExpectedConditions.elementToBeClickable(AppiumBy.id("org.wikipedia.alpha:id/fragment_onboarding_skip_button")));
@@ -90,7 +91,7 @@ public class FirstTest extends AppiumTest {
       driver.activateApp(bundleId);
       driver.rotate(ScreenOrientation.PORTRAIT);
       try {
-        WebElement allowButton = driver.findElement(By.id("com.android.permissioncontroller:id/permission_allow_one_time_button"));
+        WebElement allowButton = driver.findElement(AppiumBy.id("com.android.permissioncontroller:id/permission_allow_one_time_button"));
         allowButton.click();
         System.out.println("Location permission granted.");
       } catch (Exception e) {
@@ -103,9 +104,71 @@ public class FirstTest extends AppiumTest {
       driver.switchTo().alert().accept();
       Map<String, Object> deviceInfo = (Map<String, Object>) driver.executeScript("mobile: deviceInfo");
       System.out.println("Device Model: " + deviceInfo.get("model"));
-      System.out.println("Device OS Version: " + deviceInfo.get("version"));
       driver.context(contextNames.toArray(new String[contextNames.size()])[0]);
+
+//      driver.installApp("https://qa-live-server.bsstag.com/download/google-chrome-122-0-6261-43.apk");
+      driver.activateApp("com.android.chrome");
+      Thread.sleep(2000);
+
+      Set<String> contextHandles = driver.getContextHandles();
+      System.out.println("Available Contexts:");
+      for (String contextName : contextHandles) {
+        System.out.println(contextName);
+      }
+      for (String context : contextHandles) {
+        if (context.contains("WEBVIEW_chrome")) {
+          driver.context(context); // Switch to WebView context
+          break;
+        }
+      }
+
+      driver.get("https://www.example.com/ajax_test");
+
+      // Asynchronous JavaScript to wait for AJAX request to finish
+      String script = "var callback = arguments[arguments.length - 1];"
+              + "var interval = setInterval(function() {"
+              + "    if (document.readyState === 'complete') {"
+              + "        clearInterval(interval);"
+              + "        callback(true);"
+              + "    }"
+              + "}, 100);";
+
+      // Execute the async script and wait for the AJAX request to finish
+      Boolean ajaxCompleted = (Boolean) driver.executeAsyncScript(script);
+
+      if (ajaxCompleted) {
+        System.out.println("AJAX request completed.");
+      } else {
+        System.out.println("AJAX request not completed.");
+      }
+
+      // switch to frame and parent frame
+      driver.get("https://www.w3schools.com/html/tryit.asp?filename=tryhtml_iframe");
+      driver.switchTo().frame("iframeResult");
+//      WebElement text = driver.findElement(By.cssSelector("h1"));
+//      System.out.println(text.getText());
+      driver.switchTo().parentFrame();
+//      WebElement result = driver.findElement(By.id("result"));
+//      System.out.println("Result text: " + result.getText());
+
+      driver.get("https://the-internet.herokuapp.com/javascript_alerts");
+      WebElement confirmPopupBtn = (WebElement) new WebDriverWait(driver, Duration.ofSeconds(30)).until(
+              ExpectedConditions.elementToBeClickable(By.cssSelector("button[onclick='jsConfirm()']")));
+      confirmPopupBtn.click();
+      Thread.sleep(2000);
+      driver.switchTo().alert().dismiss();
+      String title = (String) driver.executeScript("return document.title;");
+      System.out.println("Page Title: " + title);
+      WebElement elementalWeb = (WebElement) new WebDriverWait(driver, Duration.ofSeconds(30)).until(
+              ExpectedConditions.elementToBeClickable(By.cssSelector("a[href='http://elementalselenium.com/']")));
+      elementalWeb.click();
+      driver.navigate().refresh();
+      driver.navigate().back();
+      driver.navigate().forward();
       driver.terminateApp(bundleId);
+
+//      driver.setWindowRect(100, 200, 800, 600);
+
 //      driver.performDragAndDrop(new DragAndDropParameter(
 //              driver.findElement(AppiumBy.flutterKey("enabled")),
 //              driver.findElement(AppiumBy.flutterKey("Fixed Size Text"))));
